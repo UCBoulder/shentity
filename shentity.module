@@ -31,7 +31,7 @@ function shentity_entity_presave(\Drupal\Core\Entity\EntityInterface $entity) {
  */
 function shentity_cron() {
   $shentity_update = FALSE;
-  $gss_node_update = FALSE
+  $gss_node_update = FALSE;
   if ((date('G', time()) == 03) && (date('G', time()) < 04)) {
     $shentity_update = TRUE;
   }
@@ -53,7 +53,7 @@ function shentity_cron() {
         $entity->setChangedTime($now->format('U'));
         $entity->save();
       }
-      $i++
+      $i++;
     }
   }
   if ($gss_node_update) {
