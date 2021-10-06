@@ -1,0 +1,11 @@
+# All action links for this module
+
+shentity.shentity_add:
+  # Which route will be called by the link
+  route_name: shentity.shentity_add
+  title: 'Add Shentity'
+
+  # Where will the link appear, defined by route name.
+  appears_on:
+    - entity.shentity.collection
+    - entity.shentity.canonical

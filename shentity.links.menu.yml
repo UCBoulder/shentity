@@ -1,0 +1,11 @@
+# Define the menu links for this module
+
+entity.shentity.collection:
+  title: 'Shentity'
+  route_name: entity.shentity.collection
+  description: 'List Shentities'
+shentity.shentity_settings:
+  title: 'Shentity settings'
+  description: 'Configure shentity'
+  route_name: shentity.shentity_settings
+  parent: system.admin_structure
