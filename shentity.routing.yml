@@ -1,0 +1,57 @@
+# This file brings everything together. Very nifty!
+
+# Route name can be used in several places; e.g. links, redirects, and local
+# actions.
+entity.shentity.canonical:
+  path: '/shentity/{shentity}'
+  defaults:
+    # Calls the view controller, defined in the annotation of the contact
+    # entity. This marks this route as belonging to this entity type.
+    _entity_view: 'shentity'
+    _title: 'Shentity content'
+  requirements:
+    _permission: 'create page content'
+
+entity.shentity.collection:
+  path: '/shentity/list'
+  defaults:
+  # Calls the list controller, defined in the annotation of the contact entity.
+    _entity_list: 'shentity'
+    _title: 'Shentity list'
+  requirements:
+    _permission: 'create page content'
+
+shentity.shentity_add:
+  path: '/shentity/add'
+  defaults:
+    # Calls the form.add controller, defined in the contact entity.
+    _entity_form: shentity.default
+    _title: 'Add shentity'
+  requirements:
+    _permission: 'create page content'
+
+entity.shentity.edit_form:
+  path: '/shentity/{shentity}/edit'
+  defaults:
+  # Calls the form.edit controller, defined in the contact entity.
+    _entity_form: shentity.default
+    _title: 'Edit shentity'
+  requirements:
+    _permission: 'edit any page content'
+
+entity.shentity.delete_form:
+  path: '/shentity/{shentity}/delete'
+  defaults:
+    # Calls the form.delete controller, defined in the contact entity.
+    _entity_form: shentity.delete
+    _title: 'Delete shentity'
+  requirements:
+    _permission: 'delete any page content'
+
+shentity.shentity_settings:
+  path: '/admin/structure/shentity_settings'
+  defaults:
+    _form: '\Drupal\shentity\Form\ShentitySettingsForm'
+    _title: 'Shentity settings'
+  requirements:
+    _permission: 'administer nodes'

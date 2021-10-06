@@ -1,0 +1,9 @@
+{
+  "name": "oit/shentity",
+  "type": "drupal-custom-module",
+  "description": "This pulls google sheets into an entity",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0-or-later",
+  "homepage": "https://github.com/UCBoulder/shentity",
+  "minimum-stability": "dev"
+}

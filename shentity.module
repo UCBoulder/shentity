@@ -1,0 +1,69 @@
+<?php
+
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Cache\Cache;
+
+/**
+ * @file
+ * Contains Drupal\shentity.module.
+ */
+
+use Drupal\shentity\Plugin\PullGoogleSheet;
+
+/**
+ * Implements hook_entity_presave().
+ */
+function shentity_entity_presave(\Drupal\Core\Entity\EntityInterface $entity) {
+  if ($entity->getEntityTypeId() == 'shentity') {
+    $key = $entity->get('key')->value;
+    $fields = $entity->get('field_row')->value;
+    $type = $entity->get('type')->value;
+    $sheet_number = $entity->get('sheet_number')->value;
+    $shift = $entity->get('shift')->value;
+    $google_sheet = new PullGoogleSheet($key, $fields, $type, $sheet_number, $shift);
+    $sheet_data = $google_sheet->getData()->__toString();
+    $entity->set('sheet', $sheet_data);
+  }
+}
+
+/**
+ * Implements hook_cron().
+ */
+function shentity_cron() {
+  $shentity_update = FALSE;
+  $gss_node_update = FALSE
+  if ((date('G', time()) == 03) && (date('G', time()) < 04)) {
+    $shentity_update = TRUE;
+  }
+  if ((date('G', time()) == 04) && (date('i', time()) < 15)) {
+    $gss_node_update = TRUE;
+  }
+  if ($shentity_update) {
+    $date = new DrupalDateTime('-12 hours');
+    $yesterday = $date->format('U');
+    $query = \Drupal::entityQuery('shentity');
+    $query->condition('changed', $yesterday, '<=');
+    $results = $query->execute();
+    $i = 0;
+    foreach ($results as $sid) {
+      if ($i < 5) {
+        $now = new DrupalDateTime();
+        $entity = \Drupal::entityTypeManager()->getStorage('shentity')->load($sid);
+        $entity->set('sheet', '');
+        $entity->setChangedTime($now->format('U'));
+        $entity->save();
+      }
+      $i++
+    }
+  }
+  if ($gss_node_update) {
+    $search_gss = \Drupal::entityQuery('node');
+    $search_gss->condition('body', '[/gss]', 'CONTAINS');
+    $search_gss->condition('changed', $yesterday, '<=');
+    $search_gss_results = $search_gss->execute();
+    foreach ($search_gss_results as $gss_node) {
+      $node_loaded = \Drupal::entityTypeManager()->getStorage('node')->load($gss_node);
+      Cache::invalidateTags($gss_node->getCacheTags());
+    }
+  }
+}

@@ -1,0 +1,8 @@
+name: 'shentity: Google Sheet Entity'
+type: module
+description: 'Entity that sets google sheet to pull in'
+dependencies:
+  - drupal:shortsheets
+  - drupal:oit
+
+core_version_requirement: ^8 || ^9

@@ -1,0 +1,4 @@
+gss.search:
+  version: 1.x
+  js:
+    js/gss_search.js: {}
