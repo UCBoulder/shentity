@@ -230,7 +230,7 @@ class Shentity extends ContentEntityBase implements ShentityInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-      $fields['sheet_number'] = BaseFieldDefinition::create('string')
+    $fields['sheet_number'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Sheet Number'))
       ->setDescription(t('Sheet number you are referring to, which is what is gid= in sheet url.'))
       ->setSettings([
@@ -252,7 +252,7 @@ class Shentity extends ContentEntityBase implements ShentityInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-      $fields['shift'] = BaseFieldDefinition::create('integer')
+    $fields['shift'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Shift'))
       ->setDescription(t('How many columns to shift down.'))
       // Set no default value.

@@ -3,13 +3,10 @@
 namespace Drupal\shentity\Plugin;
 
 use Drupal\oit\Plugin\GoogleSheetsApi;
-use Drupal\Core\Language\Language;
 use Drupal\Component\Utility\Xss;
-use Drupal\devel\Plugin\Devel\Dumper\Kint;
 
 /**
  * Pulls in google sheet.
- *
  */
 class PullGoogleSheet {
 

@@ -89,7 +89,7 @@ class ShentityListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var $entity \Drupal\content_entity_example\Entity\Contact */
+    /** @var \Drupal\content_entity_example\Entity\Contact $entity */
     $row['id'] = $entity->id();
     $row['title'] = $entity->toLink()->toString();
     $row['key'] = $entity->key->value;

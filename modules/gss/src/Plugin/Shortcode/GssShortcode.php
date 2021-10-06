@@ -30,8 +30,9 @@ class GssShortcode extends ShortcodeBase {
     );
 
     $key = !empty($attributes['key']) ? Xss::filter($attributes['key']) : NULL;
-    $search = $attributes['search'] > 0 ? Xss::filter($attributes['search']) : 0;
 
+    // $search = $attributes['search'] >
+    // 0 ? Xss::filter($attributes['search']) : 0;
     if ($key !== NULL) {
       if (!is_numeric($key)) {
         return '';
