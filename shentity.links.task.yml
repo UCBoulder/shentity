@@ -1,0 +1,22 @@
+# Define the 'local' links for the module
+
+shentity.settings:
+  route_name: shentity.contact_settings
+  title: Settings
+  base_route: shentity.shentity_settings
+
+shentity.view:
+  route_name: entity.shentity.canonical
+  base_route: entity.shentity.canonical
+  title: View
+
+shentity.page_edit:
+  route_name: entity.shentity.edit_form
+  base_route: entity.shentity.canonical
+  title: Edit
+
+contact.delete_confirm:
+  route_name: entity.shentity.delete_form
+  base_route: entity.shentity.canonical
+  title: Delete
+  weight: 10
