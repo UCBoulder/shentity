@@ -32,7 +32,7 @@ function shentity_entity_presave(\Drupal\Core\Entity\EntityInterface $entity) {
 function shentity_cron() {
   $shentity_update = FALSE;
   $gss_node_update = FALSE;
-  if ((date('G', time()) > 03) && (date('G', time()) < 04)) {
+  if (date('G', time()) > 03) {
     $shentity_update = TRUE;
   }
   if ((date('G', time()) == 04) && (date('i', time()) < 15)) {
