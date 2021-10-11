@@ -40,7 +40,7 @@ class GssShortcode extends ShortcodeBase {
       if (!isset($entity->sheet)) {
         return '';
       }
-      // Adds class to add search
+      // Adds class to add search.
       $gss_plain = $search ? "<div class='gdoc-search'></div>" . $entity->sheet->value : $entity->sheet->value;
       $gss = check_markup($gss_plain, 'rich_text');
       return $gss;
