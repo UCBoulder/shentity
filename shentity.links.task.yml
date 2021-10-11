@@ -1,7 +1,7 @@
 # Define the 'local' links for the module
 
 shentity.settings:
-  route_name: shentity.contact_settings
+  route_name: shentity.shentity_settings
   title: Settings
   base_route: shentity.shentity_settings
 

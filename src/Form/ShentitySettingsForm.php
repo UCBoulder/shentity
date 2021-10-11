@@ -33,7 +33,7 @@ class ShentitySettingsForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['contact_settings']['#markup'] = 'Settings form for shentity. Manage field settings here.';
+    $form['shentity_settings']['#markup'] = 'Settings form for shentity. Manage field settings here.';
     return $form;
   }
 
