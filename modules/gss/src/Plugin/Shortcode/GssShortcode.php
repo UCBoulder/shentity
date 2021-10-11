@@ -30,9 +30,8 @@ class GssShortcode extends ShortcodeBase {
     );
 
     $key = !empty($attributes['key']) ? Xss::filter($attributes['key']) : NULL;
+    $search = !empty($attributes['search']) ? Xss::filter($attributes['search']) : 0;
 
-    // $search = $attributes['search'] >
-    // 0 ? Xss::filter($attributes['search']) : 0;
     if ($key !== NULL) {
       if (!is_numeric($key)) {
         return '';
@@ -41,7 +40,9 @@ class GssShortcode extends ShortcodeBase {
       if (!isset($entity->sheet)) {
         return '';
       }
-      $gss = check_markup($entity->sheet->value, 'rich_text');
+      // Adds class to add search
+      $gss_plain = $search ? "<div class='gdoc-search'></div>" . $entity->sheet->value : $entity->sheet->value;
+      $gss = check_markup($gss_plain, 'rich_text');
       return $gss;
     }
     else {
