@@ -3,8 +3,8 @@
 namespace Drupal\shentity\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
-use Drupal\Core\Language\Language;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Language\Language;
 
 /**
  * Form controller for the shentity entity edit forms.
@@ -37,6 +37,7 @@ class ShentityForm extends ContentEntityForm {
     $form_state->setRedirect('entity.shentity.collection');
     $entity = $this->getEntity();
     $entity->save();
+    return '';
   }
 
 }

@@ -1,26 +1,25 @@
 <?php
 
-use Drupal\Core\Datetime\DrupalDateTime;
-use Drupal\Core\Cache\Cache;
-
 /**
  * @file
- * Contains Drupal\shentity.module.
  */
 
-use Drupal\shentity\Plugin\PullGoogleSheet;
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Implements hook_entity_presave().
  */
-function shentity_entity_presave(\Drupal\Core\Entity\EntityInterface $entity) {
+function shentity_entity_presave(EntityInterface $entity) {
   if ($entity->getEntityTypeId() == 'shentity') {
     $key = $entity->get('key')->value;
     $fields = $entity->get('field_row')->value;
     $type = $entity->get('type')->value;
     $sheet_number = $entity->get('sheet_number')->value;
     $shift = $entity->get('shift')->value;
-    $google_sheet = new PullGoogleSheet($key, $fields, $type, $sheet_number, $shift);
+    $google_sheet = \Drupal::service('shentity.pull.google.sheet');
+    $google_sheet->fetch($key, $fields, $type, $sheet_number, $shift);
     $sheet_data = $google_sheet->getData()->__toString();
     $entity->set('sheet', $sheet_data);
   }
@@ -60,6 +59,7 @@ function shentity_cron() {
     $search_gss = \Drupal::entityQuery('node');
     $search_gss->condition('body', '[/gss]', 'CONTAINS');
     $search_gss->condition('changed', $yesterday, '<=');
+    $search_gss->accessCheck(FALSE);
     $search_gss_results = $search_gss->execute();
     foreach ($search_gss_results as $gss_node) {
       $node_loaded = \Drupal::entityTypeManager()->getStorage('node')->load($gss_node);

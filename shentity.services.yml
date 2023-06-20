@@ -1,0 +1,4 @@
+services:
+  shentity.pull.google.sheet:
+    class: Drupal\shentity\Plugin\PullGoogleSheet
+    arguments: ['@logger.factory', '@renderer']

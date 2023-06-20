@@ -2,8 +2,10 @@
 
 namespace Drupal\shentity\Plugin;
 
-use Drupal\oit\Plugin\GoogleSheetsApi;
 use Drupal\Component\Utility\Xss;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Render\RendererInterface;
+use Drupal\oit\Plugin\GoogleSheetsApi;
 
 /**
  * Pulls in google sheet.
@@ -18,10 +20,31 @@ class PullGoogleSheet {
   private $data;
 
   /**
+   * The Teams logging channel.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
+   */
+  protected $logger;
+
+  /**
+   * The 'renderer' service.
+   *
+   * @var \Drupal\Core\Render\RendererInterface
+   */
+  protected $renderer;
+
+  /**
+   * Construct the PullGoogleSheet object.
+   */
+  public function __construct(LoggerChannelFactoryInterface $channelFactory, RendererInterface $renderer) {
+    $this->renderer = $renderer;
+    $this->logger = $channelFactory->get('shentity');
+  }
+
+  /**
    * Setup table or list from Google sheet.
    */
-  public function __construct($key, $fields, $type, $sheet_number, $shift) {
-
+  public function fetch($key, $fields, $type, $sheet_number, $shift) {
     $key = !empty($key) ? Xss::filter($key) : NULL;
     $gid = $sheet_number >= 0 ? Xss::filter($sheet_number) : NULL;
     $shift = Xss::filter($shift);
@@ -36,14 +59,14 @@ class PullGoogleSheet {
       }
       else {
         $table_header = [];
-        \Drupal::logger('shentity')->warning("No header on sheet $key");
+        $this->logger->warning("No header on sheet $key");
       }
       if (isset($table_data['rows'])) {
         $table_rows = $table_data['rows'];
       }
       else {
         $table_rows = [];
-        \Drupal::logger('shentity')->warning("No rows on sheet $key");
+        $this->logger->warning("No rows on sheet $key");
       }
       $build['tablesort_table'] = [
         '#type' => 'table',
@@ -55,7 +78,7 @@ class PullGoogleSheet {
       ];
 
       if (isset($build)) {
-        $this->data = \Drupal::service('renderer')->renderPlain($build);
+        $this->data = $this->renderer->renderPlain($build);
       }
     }
     elseif ($key !== NULL && $gid !== NULL && $type == 'ttext') {
