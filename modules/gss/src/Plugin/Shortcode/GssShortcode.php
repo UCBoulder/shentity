@@ -2,9 +2,12 @@
 
 namespace Drupal\gss\Plugin\Shortcode;
 
-use Drupal\Core\Language\Language;
-use Drupal\shortcode\Plugin\ShortcodeBase;
 use Drupal\Component\Utility\Xss;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Language\Language;
+use Drupal\Core\Render\RendererInterface;
+use Drupal\shortcode\Plugin\ShortcodeBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a shortcode for adding Google Sheet table from Shentity.
@@ -16,6 +19,51 @@ use Drupal\Component\Utility\Xss;
  * )
  */
 class GssShortcode extends ShortcodeBase {
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * Constructs a new Shortcode plugin.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   The renderer service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   Entity manager.
+   */
+  public function __construct(
+    array $configuration,
+          $plugin_id,
+          $plugin_definition,
+    RendererInterface $renderer,
+    EntityTypeManagerInterface $entity_type_manager
+  ) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $renderer);
+    $this->entityTypeManager = $entity_type_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
+    return new self(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('renderer'),
+      $container->get('entity_type.manager')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -36,7 +84,7 @@ class GssShortcode extends ShortcodeBase {
       if (!is_numeric($key)) {
         return '';
       }
-      $entity = \Drupal::entityTypeManager()->getStorage('shentity')->load($key);
+      $entity = $this->entityTypeManager->getStorage('shentity')->load($key);
       if (!isset($entity->sheet)) {
         return '';
       }
