@@ -78,7 +78,7 @@ class PullGoogleSheet {
       ];
 
       if (isset($build)) {
-        $this->data = $this->renderer->renderPlain($build);
+        $this->data = $this->renderer->render($build);
       }
     }
     elseif ($key !== NULL && $gid !== NULL && $type == 'ttext') {
