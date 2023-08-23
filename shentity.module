@@ -63,7 +63,7 @@ function shentity_cron() {
     $search_gss_results = $search_gss->execute();
     foreach ($search_gss_results as $gss_node) {
       $node_loaded = \Drupal::entityTypeManager()->getStorage('node')->load($gss_node);
-      Cache::invalidateTags($gss_node->getCacheTags());
+      Cache::invalidateTags($node_loaded->getCacheTags());
     }
   }
 }
