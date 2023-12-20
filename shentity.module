@@ -42,6 +42,7 @@ function shentity_cron() {
     $yesterday = $date->format('U');
     $query = \Drupal::entityQuery('shentity');
     $query->condition('changed', $yesterday, '<=');
+    $query->accessCheck(FALSE);
     $results = $query->execute();
     $i = 0;
     foreach ($results as $sid) {
