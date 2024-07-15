@@ -43,10 +43,10 @@ class GssShortcode extends ShortcodeBase {
    */
   public function __construct(
     array $configuration,
-          $plugin_id,
-          $plugin_definition,
+    $plugin_id,
+    $plugin_definition,
     RendererInterface $renderer,
-    EntityTypeManagerInterface $entity_type_manager
+    EntityTypeManagerInterface $entity_type_manager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $renderer);
     $this->entityTypeManager = $entity_type_manager;
