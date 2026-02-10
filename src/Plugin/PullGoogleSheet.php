@@ -2,6 +2,7 @@
 
 namespace Drupal\shentity\Plugin;
 
+use Drupal\Component\Utility\Random;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Render\RendererInterface;
@@ -54,8 +55,9 @@ class PullGoogleSheet {
       $table = new GoogleSheetsApi();
       $table->sheetDefined($key, $sheet_letters, $gid, $shift, $shentity);
       $table_data = $table->getSheetData();
-      // Encode $key to create id for table.
-      $id = base64_encode($key);
+      // Random characters for id.
+      $random = new Random();
+      $id = $random->string();
       $id = 'shentity-' . preg_replace('/[^a-zA-Z0-9\-]/', '', substr($id, 0, 10));
       if (isset($table_data['header'])) {
         $table_header = $table_data['header'];
