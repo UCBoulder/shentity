@@ -54,6 +54,9 @@ class PullGoogleSheet {
       $table = new GoogleSheetsApi();
       $table->sheetDefined($key, $sheet_letters, $gid, $shift, $shentity);
       $table_data = $table->getSheetData();
+      // Encode $key to create id for table.
+      $id = base64_encode($key);
+      $id = 'shentity-' . preg_replace('/[^a-zA-Z0-9\-]/', '', substr($id, 0, 10));
       if (isset($table_data['header'])) {
         $table_header = $table_data['header'];
       }
@@ -73,7 +76,8 @@ class PullGoogleSheet {
         '#header' => $table_header,
         '#rows' => $table_rows,
         '#attributes' => [
-          'id' => 'gdoc-table',
+          'id' => $id,
+          'class' => ['shentity-table'],
         ],
       ];
 
