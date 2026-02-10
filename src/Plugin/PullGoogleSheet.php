@@ -44,15 +44,15 @@ class PullGoogleSheet {
   /**
    * Setup table or list from Google sheet.
    */
-  public function fetch($key, $fields, $type, $sheet_number, $shift) {
-    $key = !empty($key) ? Xss::filter($key) : NULL;
-    $gid = $sheet_number >= 0 ? Xss::filter($sheet_number) : NULL;
-    $shift = Xss::filter($shift);
+  public function fetch($key, $fields, $type, $sheet_number, $shift, $shentity = FALSE) {
+    $key = !empty($key) && strpos($key, 'https://docs.google.com') === 0 ? $key : NULL;
+    $gid = ($sheet_number !== NULL && $sheet_number >= 0) ? Xss::filter((string) $sheet_number) : NULL;
+    $shift = ($shift !== NULL && $shift >= 0) ? Xss::filter((string) $shift) : NULL;
 
-    if ($key !== NULL && $gid !== NULL && $type == 'table') {
+    if ($key !== NULL && $type == 'table') {
       $sheet_letters = $fields;
       $table = new GoogleSheetsApi();
-      $table->sheetDefined($key, $sheet_letters, $gid, $shift);
+      $table->sheetDefined($key, $sheet_letters, $gid, $shift, $shentity);
       $table_data = $table->getSheetData();
       if (isset($table_data['header'])) {
         $table_header = $table_data['header'];

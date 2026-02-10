@@ -136,8 +136,30 @@ class Shentity extends ContentEntityBase implements ShentityInterface {
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['key'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Key'))
-      ->setDescription(t('The key of the google sheet.'))
+      ->setLabel(t('Key (Deprecated)'))
+      ->setDescription(t('The key of the google sheet. Only use for old sheets.'))
+      ->setSettings([
+        'max_length' => 255,
+        'text_processing' => 0,
+      ])
+      // Set no default value.
+      ->setDefaultValue(NULL)
+      ->setRequired(FALSE)
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -6,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'string_textfield',
+        'weight' => -6,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['full_key'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Full share CSV url'))
+      ->setDescription(t('Newer sheets changed the url. Grab the full csv url and place it here'))
       ->setSettings([
         'max_length' => 255,
         'text_processing' => 0,
@@ -239,7 +261,7 @@ class Shentity extends ContentEntityBase implements ShentityInterface {
       ])
       // Set no default value.
       ->setDefaultValue(NULL)
-      ->setRequired(TRUE)
+      ->setRequired(FALSE)
       ->setDisplayOptions('view', [
         'label' => 'above',
         'type' => 'string',
