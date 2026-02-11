@@ -62,8 +62,8 @@ class PullGoogleSheet {
     else {
       $key = NULL;
     }
-    $gid = ($sheet_number !== NULL && $sheet_number >= 0) ? Xss::filter((string) $sheet_number) : NULL;
-    $shift = ($shift !== NULL && $shift >= 0) ? Xss::filter((string) $shift) : NULL;
+    $gid = ($sheet_number !== NULL && ctype_digit((string) $sheet_number)) ? Xss::filter((string) $sheet_number) : NULL;
+    $shift = ($shift !== NULL && ctype_digit((string) $shift)) ? Xss::filter((string) $shift) : NULL;
 
     if ($key !== NULL && $type == 'table') {
       $sheet_letters = $fields;
