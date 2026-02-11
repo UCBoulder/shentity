@@ -159,7 +159,8 @@ class Shentity extends ContentEntityBase implements ShentityInterface {
 
     $fields['full_key'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Full share CSV URL'))
-      ->setDescription(t('Newer sheets changed the URL. Copy the full CSV URL and paste it here.'))
+      ->setDescription(t('Newer sheets changed the URL. Copy the full CSV URL and paste it here. Be sure to select the correct sheet (1), and comma seperated values (2) to create the proper URL to place here.') .
+        " <a href='/modules/custom/shentity/img/publish-sheet.png'>See screenshot</a>")
       ->setSettings([
         'max_length' => 255,
         'text_processing' => 0,

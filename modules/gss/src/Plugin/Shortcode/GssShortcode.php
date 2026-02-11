@@ -90,6 +90,7 @@ class GssShortcode extends ShortcodeBase {
       }
       // Adds class to add search.
       $gss_plain = $search ? "<div class='table-search'></div>" . $entity->sheet->value : $entity->sheet->value;
+
       // Render the table.
       $gss = [
         '#type' => 'inline_template',
