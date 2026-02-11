@@ -37,8 +37,12 @@ function shentity_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($form_id == 'shentity_form') {
     // Old key field is hidden and not used anymore, but we want to keep it
     // in the database for now.
-    $form['key']['#access'] = FALSE;
-    $form['sheet_number']['#access'] = FALSE;
+    if (isset($form['key'])) {
+      $form['key']['#access'] = FALSE;
+    }
+    if (isset($form['sheet_number'])) {
+      $form['sheet_number']['#access'] = FALSE;
+    }
   }
 }
 
