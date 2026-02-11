@@ -46,7 +46,22 @@ class PullGoogleSheet {
    * Setup table or list from Google sheet.
    */
   public function fetch($key, $fields, $type, $sheet_number, $shift, $shentity = FALSE) {
-    $key = !empty($key) && strpos($key, 'https://docs.google.com') === 0 ? $key : NULL;
+    if (!empty($key)) {
+      $parsed_url = parse_url($key);
+      if ($parsed_url !== FALSE
+        && isset($parsed_url['scheme'], $parsed_url['host'], $parsed_url['path'])
+        && $parsed_url['scheme'] === 'https'
+        && $parsed_url['host'] === 'docs.google.com'
+        && strpos($parsed_url['path'], '/spreadsheets/') === 0) {
+        // Valid Google Sheets URL.
+      }
+      else {
+        $key = NULL;
+      }
+    }
+    else {
+      $key = NULL;
+    }
     $gid = ($sheet_number !== NULL && $sheet_number >= 0) ? Xss::filter((string) $sheet_number) : NULL;
     $shift = ($shift !== NULL && $shift >= 0) ? Xss::filter((string) $shift) : NULL;
 
