@@ -23,8 +23,8 @@ function shentity_entity_presave(EntityInterface $entity) {
 
     $google_sheet->fetch($key, $fields, $type, $sheet_number, $shift, TRUE);
     $sheet_data = $google_sheet->getData();
-    if ($sheet_data) {
-      $sheet_data = $sheet_data->__toString();
+    if ($sheet_data instanceof \Stringable || $sheet_data instanceof \Drupal\Component\Render\MarkupInterface) {
+      $sheet_data = (string) $sheet_data;
     }
     $entity->set('sheet', $sheet_data);
   }
