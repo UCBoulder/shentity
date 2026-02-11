@@ -158,8 +158,8 @@ class Shentity extends ContentEntityBase implements ShentityInterface {
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['full_key'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Full share CSV url'))
-      ->setDescription(t('Newer sheets changed the url. Grab the full csv url and place it here'))
+      ->setLabel(t('Full share CSV URL'))
+      ->setDescription(t('Newer sheets changed the URL. Copy the full CSV URL and paste it here.'))
       ->setSettings([
         'max_length' => 255,
         'text_processing' => 0,
