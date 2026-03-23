@@ -102,6 +102,40 @@ class PullGoogleSheet {
         $this->data = $this->renderer->renderInIsolation($build);
       }
     }
+    elseif ($key !== NULL && $type == 'list') {
+      $sheet_letters = $fields;
+      $list = new GoogleSheetsApi();
+      $list->sheetDefined($key, $sheet_letters, $gid, $shift, $shentity);
+      $list_data = $list->getSheetData();
+      $items = [];
+      if (isset($list_data['rows'])) {
+        foreach ($list_data['rows'] as $row) {
+          $cell_values = [];
+          foreach ($row as $cell) {
+            if (isset($cell['data']['#markup'])) {
+              $cell_values[] = (string) $cell['data']['#markup'];
+            }
+          }
+          if (!empty($cell_values)) {
+            $summary = preg_replace('/^<p>(.*)<\/p>$/s', '$1', trim(array_shift($cell_values)));
+            $details_content = !empty($cell_values) ? implode(' ', $cell_values) : '';
+            $items[] = [
+              '#markup' => '<details><summary>' . $summary . '</summary>' . $details_content . '</details>',
+            ];
+          }
+        }
+      }
+      $random = new Random();
+      $list_id = 'shentity-list-' . preg_replace('/[^a-zA-Z0-9\-]/', '', substr($random->string(), 0, 10));
+      $build['list'] = [
+        '#theme' => 'item_list',
+        '#items' => $items,
+        '#attributes' => ['id' => $list_id, 'class' => ['shentity-list no-list-style']],
+      ];
+      if (isset($build)) {
+        $this->data = $this->renderer->renderInIsolation($build);
+      }
+    }
     elseif ($key !== NULL && $gid !== NULL && $type == 'ttext') {
       $sheet_letters = $fields;
       $pull_table = new GoogleSheetsApi();
