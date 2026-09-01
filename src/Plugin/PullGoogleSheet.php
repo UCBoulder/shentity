@@ -130,9 +130,12 @@ class PullGoogleSheet {
         foreach ($list_data['rows'] as $row) {
           $cell_values = [];
           foreach ($row as $cell) {
-            if (isset($cell['data']['#markup'])) {
-              $cell_values[] = (string) $cell['data']['#markup'];
+            if (!isset($cell['data']) || $cell['data'] === '') {
+              continue;
             }
+            $cell_values[] = is_array($cell['data'])
+              ? (string) $this->renderer->renderInIsolation($cell['data'])
+              : (string) $cell['data'];
           }
           if (!empty($cell_values)) {
             $summary = preg_replace('/^<p>(.*)<\/p>$/s', '$1', trim(array_shift($cell_values)));

@@ -2,8 +2,10 @@
 
 /**
  * @file
+ * Hook implementations for the Shentity module.
  */
 
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -25,7 +27,7 @@ function shentity_entity_presave(EntityInterface $entity) {
     // empty table on the site until the next successful cron pass.
     if ($google_sheet->isSuccessful()) {
       $sheet_data = $google_sheet->getData();
-      if ($sheet_data instanceof \Stringable || $sheet_data instanceof \Drupal\Component\Render\MarkupInterface) {
+      if ($sheet_data instanceof \Stringable || $sheet_data instanceof MarkupInterface) {
         $sheet_data = (string) $sheet_data;
       }
       $entity->set('sheet', $sheet_data);
