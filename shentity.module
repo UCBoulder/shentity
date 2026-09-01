@@ -2,10 +2,10 @@
 
 /**
  * @file
+ * Hook implementations for the Shentity module.
  */
 
-use Drupal\Core\Cache\Cache;
-use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -22,11 +22,16 @@ function shentity_entity_presave(EntityInterface $entity) {
     $google_sheet = \Drupal::service('shentity.pull.google.sheet');
 
     $google_sheet->fetch($key, $fields, $type, $sheet_number, $shift, TRUE);
-    $sheet_data = $google_sheet->getData();
-    if ($sheet_data instanceof \Stringable || $sheet_data instanceof \Drupal\Component\Render\MarkupInterface) {
-      $sheet_data = (string) $sheet_data;
+    // Only overwrite the stored sheet when the fetch actually produced data.
+    // A transient Google failure would otherwise blank the field and leave an
+    // empty table on the site until the next successful cron pass.
+    if ($google_sheet->isSuccessful()) {
+      $sheet_data = $google_sheet->getData();
+      if ($sheet_data instanceof \Stringable || $sheet_data instanceof MarkupInterface) {
+        $sheet_data = (string) $sheet_data;
+      }
+      $entity->set('sheet', $sheet_data);
     }
-    $entity->set('sheet', $sheet_data);
   }
 }
 
@@ -42,50 +47,6 @@ function shentity_form_alter(&$form, FormStateInterface $form_state, $form_id) {
     }
     if (isset($form['sheet_number'])) {
       $form['sheet_number']['#access'] = FALSE;
-    }
-  }
-}
-
-/**
- * Implements hook_cron().
- */
-function shentity_cron() {
-  $shentity_update = FALSE;
-  $gss_node_update = FALSE;
-  if (date('G', time()) > 03) {
-    $shentity_update = TRUE;
-  }
-  if ((date('G', time()) == 04) && (date('i', time()) < 15)) {
-    $gss_node_update = TRUE;
-  }
-  if ($shentity_update) {
-    $date = new DrupalDateTime('-12 hours');
-    $yesterday = $date->format('U');
-    $query = \Drupal::entityQuery('shentity');
-    $query->condition('changed', $yesterday, '<=');
-    $query->accessCheck(FALSE);
-    $results = $query->execute();
-    $i = 0;
-    foreach ($results as $sid) {
-      if ($i < 5) {
-        $now = new DrupalDateTime();
-        $entity = \Drupal::entityTypeManager()->getStorage('shentity')->load($sid);
-        $entity->set('sheet', '');
-        $entity->setChangedTime($now->format('U'));
-        $entity->save();
-      }
-      $i++;
-    }
-  }
-  if ($gss_node_update) {
-    $search_gss = \Drupal::entityQuery('node');
-    $search_gss->condition('body', '[/gss]', 'CONTAINS');
-    $search_gss->condition('changed', $yesterday, '<=');
-    $search_gss->accessCheck(FALSE);
-    $search_gss_results = $search_gss->execute();
-    foreach ($search_gss_results as $gss_node) {
-      $node_loaded = \Drupal::entityTypeManager()->getStorage('node')->load($gss_node);
-      Cache::invalidateTags($node_loaded->getCacheTags());
     }
   }
 }
