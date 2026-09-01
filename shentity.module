@@ -22,11 +22,16 @@ function shentity_entity_presave(EntityInterface $entity) {
     $google_sheet = \Drupal::service('shentity.pull.google.sheet');
 
     $google_sheet->fetch($key, $fields, $type, $sheet_number, $shift, TRUE);
-    $sheet_data = $google_sheet->getData();
-    if ($sheet_data instanceof \Stringable || $sheet_data instanceof \Drupal\Component\Render\MarkupInterface) {
-      $sheet_data = (string) $sheet_data;
+    // Only overwrite the stored sheet when the fetch actually produced data.
+    // A transient Google failure would otherwise blank the field and leave an
+    // empty table on the site until the next successful cron pass.
+    if ($google_sheet->isSuccessful()) {
+      $sheet_data = $google_sheet->getData();
+      if ($sheet_data instanceof \Stringable || $sheet_data instanceof \Drupal\Component\Render\MarkupInterface) {
+        $sheet_data = (string) $sheet_data;
+      }
+      $entity->set('sheet', $sheet_data);
     }
-    $entity->set('sheet', $sheet_data);
   }
 }
 
@@ -68,9 +73,13 @@ function shentity_cron() {
     $i = 0;
     foreach ($results as $sid) {
       if ($i < 5) {
+        // Space the requests out: the published Google Sheets CSV endpoint
+        // throttles bursts, and every save triggers a fetch in presave.
+        if ($i > 0) {
+          sleep(3);
+        }
         $now = new DrupalDateTime();
         $entity = \Drupal::entityTypeManager()->getStorage('shentity')->load($sid);
-        $entity->set('sheet', '');
         $entity->setChangedTime($now->format('U'));
         $entity->save();
       }

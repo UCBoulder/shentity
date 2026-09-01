@@ -21,6 +21,16 @@ class PullGoogleSheet {
   private $data;
 
   /**
+   * Whether the last fetch produced usable data.
+   *
+   * FALSE when the remote sheet could not be retrieved, so callers can keep
+   * whatever they already had rather than storing an empty table.
+   *
+   * @var bool
+   */
+  private $success = FALSE;
+
+  /**
    * The Teams logging channel.
    *
    * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
@@ -46,6 +56,7 @@ class PullGoogleSheet {
    * Setup table or list from Google sheet.
    */
   public function fetch($key, $fields, $type, $sheet_number, $shift, $shentity = FALSE) {
+    $this->success = FALSE;
     if (!empty($key)) {
       $parsed_url = parse_url($key);
       if ($parsed_url !== FALSE
@@ -69,6 +80,9 @@ class PullGoogleSheet {
       $sheet_letters = $fields;
       $table = new GoogleSheetsApi();
       $table->sheetDefined($key, $sheet_letters, $gid, $shift, $shentity);
+      if (!$table->isSuccessful()) {
+        return;
+      }
       $table_data = $table->getSheetData();
       // Random characters for id.
       $random = new Random();
@@ -100,12 +114,16 @@ class PullGoogleSheet {
 
       if (isset($build)) {
         $this->data = $this->renderer->renderInIsolation($build);
+        $this->success = TRUE;
       }
     }
     elseif ($key !== NULL && $type == 'list') {
       $sheet_letters = $fields;
       $list = new GoogleSheetsApi();
       $list->sheetDefined($key, $sheet_letters, $gid, $shift, $shentity);
+      if (!$list->isSuccessful()) {
+        return;
+      }
       $list_data = $list->getSheetData();
       $items = [];
       if (isset($list_data['rows'])) {
@@ -134,32 +152,25 @@ class PullGoogleSheet {
       ];
       if (isset($build)) {
         $this->data = $this->renderer->renderInIsolation($build);
+        $this->success = TRUE;
       }
-    }
-    elseif ($key !== NULL && $gid !== NULL && $type == 'ttext') {
-      $sheet_letters = $fields;
-      $pull_table = new GoogleSheetsApi();
-      $pull_table->sheetDefined($key, $key . '--' . $gid, $sheet_letters, $gid, $shift);
-      $table = $pull_table->getSheetData();
-      $full_row = '<div class="shortsheets">';
-      if (isset($table['rows'])) {
-        foreach ($table['rows'] as $row) {
-          foreach ($row['data'] as $key => $column) {
-            $full_row .= sprintf(
-              '<dl class="sheetrow sheetrow%s"><dt>%s</dt><dd>%s</dd></dl>',
-              $key,
-              $table['header'][$key],
-              $column
-            );
-          }
-        }
-      }
-      $full_row .= '</div>';
-      $this->data = $full_row;
     }
     else {
+      // No usable key or an unknown type: an empty result is the correct
+      // answer here, so it is safe to store.
       $this->data = '';
+      $this->success = TRUE;
     }
+  }
+
+  /**
+   * Whether the last fetch produced data that is safe to store.
+   *
+   * @return bool
+   *   FALSE when the remote sheet could not be retrieved.
+   */
+  public function isSuccessful(): bool {
+    return $this->success;
   }
 
   /**
