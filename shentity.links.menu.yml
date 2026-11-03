@@ -2,10 +2,22 @@
 
 entity.shentity.collection:
   title: 'Shentity'
+  description: 'List and configure Shentities'
   route_name: entity.shentity.collection
+  parent: system.admin_structure
+  menu_name: admin
+
+shentity.shentity_list:
+  title: 'Shentity list'
   description: 'List Shentities'
+  route_name: entity.shentity.collection
+  parent: entity.shentity.collection
+  menu_name: admin
+  weight: -10
+
 shentity.shentity_settings:
   title: 'Shentity settings'
   description: 'Configure shentity'
   route_name: shentity.shentity_settings
-  parent: system.admin_structure
+  parent: entity.shentity.collection
+  menu_name: admin
